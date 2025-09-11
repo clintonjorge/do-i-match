@@ -16,6 +16,7 @@ export interface JobDiscoveryResponse {
   title?: string;
   description?: string;
   link?: string;
+  text_response?: string; // For plain text AI responses
   // Legacy fields for backward compatibility
   job_title?: string;
   company?: string;

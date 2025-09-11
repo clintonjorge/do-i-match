@@ -24,10 +24,18 @@ export const jobService = {
         );
       }
       
-      const rawData = await response.json();
+      // Check if response is JSON or plain text
+      const contentType = response.headers.get("content-type");
+      const isJson = contentType && contentType.includes("application/json");
       
-      // Process and normalize the response data
-      return this.processWebhookResponse(rawData);
+      if (isJson) {
+        const rawData = await response.json();
+        return this.processWebhookResponse(rawData);
+      } else {
+        // Handle plain text response
+        const textData = await response.text();
+        return { text_response: textData };
+      }
     } catch (error) {
       if (error instanceof JobServiceError) {
         throw error;

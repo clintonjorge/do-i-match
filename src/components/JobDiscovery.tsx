@@ -3,6 +3,7 @@ import {
   JobDiscoveryHero,
   JobDiscoveryForm,
   JobDiscoverySuccess,
+  JobDiscoveryTextSuccess,
   JobDiscoveryError,
 } from "@/components/job-discovery";
 import { AuroraBackground } from "@/components/ui/aurora-background";
@@ -36,10 +37,19 @@ export default function JobDiscovery() {
         )}
 
         {state === "success" && (
-          <JobDiscoverySuccess 
-            result={result} 
-            onReset={handleReset}
-          />
+          <>
+            {result?.text_response ? (
+              <JobDiscoveryTextSuccess 
+                result={result} 
+                onReset={handleReset}
+              />
+            ) : (
+              <JobDiscoverySuccess 
+                result={result} 
+                onReset={handleReset}
+              />
+            )}
+          </>
         )}
 
         {state === "error" && (
