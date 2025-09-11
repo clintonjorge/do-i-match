@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2, Sparkles, ArrowRight, RotateCcw } from "lucide-react";
 import heroImage from "@/assets/futuristic-hero-bg.jpg";
@@ -86,23 +86,24 @@ export default function JobDiscovery() {
             {/* Input Section */}
             <div className="space-y-6">
               <div className="relative">
-                <Input
+                <Textarea
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Type your name, LinkedIn URL, desired position, and location..."
                   disabled={state === "processing"}
+                  rows={5}
                   className={`
-                    w-full max-w-lg mx-auto h-16 px-6 text-lg font-space bg-card/80 backdrop-blur-sm
-                    border-2 transition-all duration-300 rounded-full
-                    ${state === "processing" 
-                      ? "animate-glow-pulse border-primary bg-gradient-processing bg-[length:200%_100%]" 
-                      : "border-border hover:border-primary/50 focus:border-primary"
-                    }
-                  `}
+                     w-full max-w-lg mx-auto px-6 py-4 text-lg font-space bg-card/80 backdrop-blur-sm resize-none
+                     border-2 transition-all duration-300 rounded-2xl
+                     ${state === "processing" 
+                       ? "animate-glow-pulse border-primary bg-gradient-processing bg-[length:200%_100%]" 
+                       : "border-border hover:border-primary/50 focus:border-primary"
+                     }
+                   `}
                 />
                 {state === "processing" && (
-                  <div className="absolute inset-0 rounded-full bg-gradient-glow opacity-20 animate-processing-flow pointer-events-none" />
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-glow opacity-20 animate-processing-flow pointer-events-none" />
                 )}
               </div>
 
