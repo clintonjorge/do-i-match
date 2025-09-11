@@ -5,7 +5,7 @@ import {
   JobDiscoverySuccess,
   JobDiscoveryError,
 } from "@/components/job-discovery";
-import heroImage from "@/assets/futuristic-hero-bg.jpg";
+import { AuroraBackground } from "@/components/ui/aurora-background";
 
 export default function JobDiscovery() {
   const {
@@ -19,12 +19,7 @@ export default function JobDiscovery() {
   } = useJobDiscovery();
 
   return (
-    <div 
-      className="min-h-screen bg-gradient-background flex items-center justify-center p-4 relative overflow-hidden"
-    >
-      {/* Subtle light effects */}
-      <div className="absolute inset-0 bg-gradient-radial from-primary/3 via-transparent to-transparent pointer-events-none" />
-      
+    <AuroraBackground className="p-4">
       <div className="w-full max-w-2xl mx-auto">
         {state !== "success" && (
           <div className="text-center space-y-8 animate-fade-in-up">
@@ -51,6 +46,6 @@ export default function JobDiscovery() {
           <JobDiscoveryError onReset={handleReset} />
         )}
       </div>
-    </div>
+    </AuroraBackground>
   );
 }
