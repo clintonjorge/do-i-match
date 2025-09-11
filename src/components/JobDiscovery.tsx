@@ -93,7 +93,7 @@ export default function JobDiscovery() {
                   placeholder="Type your name, LinkedIn URL, desired position, and location..."
                   disabled={state === "processing"}
                   className={`
-                    w-full max-w-lg mx-auto h-14 px-6 text-lg font-space bg-card/80 backdrop-blur-sm
+                    w-full max-w-lg mx-auto h-16 px-6 text-lg font-space bg-card/80 backdrop-blur-sm
                     border-2 transition-all duration-300 rounded-full
                     ${state === "processing" 
                       ? "animate-glow-pulse border-primary bg-gradient-processing bg-[length:200%_100%]" 
