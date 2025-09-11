@@ -48,6 +48,14 @@ export const jobService = {
 
   processWebhookResponse(data: any): JobDiscoveryResponse {
     try {
+      console.log("Processing webhook response:", data);
+      
+      // Handle message.content structure (new AI response format)
+      if (data.message?.content) {
+        console.log("Found message.content, extracting as text response");
+        return { text_response: data.message.content };
+      }
+      
       // Handle nested response structure
       if (data.matching_job_openings && Array.isArray(data.matching_job_openings)) {
         return {
