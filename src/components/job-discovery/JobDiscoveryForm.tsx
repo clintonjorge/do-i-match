@@ -36,9 +36,6 @@ export const JobDiscoveryForm = ({
             }
           `}
         />
-        {state === "processing" && (
-          <div className="absolute inset-0 rounded-2xl bg-gradient-glow opacity-20 animate-processing-flow pointer-events-none" />
-        )}
       </div>
 
       <LiquidButton

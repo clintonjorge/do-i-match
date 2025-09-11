@@ -43,9 +43,6 @@ export const ChatInput = ({
                 }
               `}
             />
-            {state === "processing" && (
-              <div className="absolute inset-0 rounded-xl bg-gradient-glow opacity-20 animate-processing-flow pointer-events-none" />
-            )}
           </div>
           
           <div className="flex justify-center">
