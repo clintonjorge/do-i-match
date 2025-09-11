@@ -73,7 +73,6 @@ All colors MUST be HSL.
     transform: scale(1.02) rotate(270deg);
     border-radius: 40% 50% 30% 60%;
   }
-  }
 }
 
 @layer base {
