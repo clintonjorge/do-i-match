@@ -8,7 +8,6 @@ interface UseJobDiscoveryReturn {
   messages: ChatMessage[];
   setInputValue: (value: string) => void;
   handleSubmit: () => Promise<void>;
-  handleClearChat: () => void;
   handleKeyPress: (e: React.KeyboardEvent) => void;
 }
 
@@ -72,11 +71,6 @@ export const useJobDiscovery = (): UseJobDiscoveryReturn => {
     }
   }, [inputValue]);
 
-  const handleClearChat = useCallback(() => {
-    setState("idle");
-    setInputValue("");
-    setMessages([]);
-  }, []);
 
   const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey && state !== "processing") {
@@ -91,7 +85,6 @@ export const useJobDiscovery = (): UseJobDiscoveryReturn => {
     messages,
     setInputValue,
     handleSubmit,
-    handleClearChat,
     handleKeyPress,
   };
 };
