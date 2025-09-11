@@ -4,14 +4,14 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const liquidGlassButtonVariants = cva(
-  "relative inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl text-sm font-medium transition-all duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 overflow-hidden font-space backdrop-blur-xl border border-white/10",
+  "relative inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl text-sm font-medium transition-all duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 overflow-hidden font-space backdrop-blur-xl border border-primary/20 shadow-lg",
   {
     variants: {
       variant: {
-        default: "bg-white/5 text-foreground hover:bg-white/10 shadow-[0_8px_32px_0_rgba(31,38,135,0.37)]",
-        primary: "bg-primary/10 text-primary hover:bg-primary/20 shadow-[0_8px_32px_0_hsl(var(--primary)/0.3)]",
-        accent: "bg-accent/10 text-accent hover:bg-accent/20 shadow-[0_8px_32px_0_hsl(var(--accent)/0.3)]",
-        processing: "bg-gradient-processing bg-[length:200%_100%] text-primary-foreground animate-processing-flow cursor-not-allowed",
+        default: "bg-white/80 text-foreground hover:bg-white/90 shadow-[0_8px_32px_0_hsl(var(--primary)/0.15)]",
+        primary: "bg-primary/10 text-primary hover:bg-primary/20 shadow-[0_8px_32px_0_hsl(var(--primary)/0.25)] border-primary/30",
+        accent: "bg-accent/10 text-accent hover:bg-accent/20 shadow-[0_8px_32px_0_hsl(var(--accent)/0.25)] border-accent/30",
+        processing: "bg-gradient-processing bg-[length:200%_100%] text-primary-foreground animate-processing-flow cursor-not-allowed border-primary/40",
       },
       size: {
         default: "h-12 px-6 py-3",
@@ -44,13 +44,13 @@ const LiquidGlassButton = React.forwardRef<HTMLButtonElement, LiquidGlassButtonP
         {...props}
       >
         {/* Liquid morphing background */}
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute inset-0 bg-gradient-radial from-white/20 via-transparent to-transparent animate-[liquid-morph_4s_ease-in-out_infinite]" />
-          <div className="absolute inset-0 bg-gradient-radial from-transparent via-white/10 to-transparent animate-[liquid-morph_6s_ease-in-out_infinite_reverse]" />
+        <div className="absolute inset-0 opacity-40">
+          <div className="absolute inset-0 bg-gradient-radial from-primary/15 via-transparent to-transparent animate-[liquid-morph_4s_ease-in-out_infinite]" />
+          <div className="absolute inset-0 bg-gradient-radial from-transparent via-accent/10 to-transparent animate-[liquid-morph_6s_ease-in-out_infinite_reverse]" />
         </div>
         
         {/* Glass reflection */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent opacity-50" />
+        <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-transparent to-primary/5 opacity-60" />
         
         {/* Content */}
         <span className="relative z-10 flex items-center gap-2">

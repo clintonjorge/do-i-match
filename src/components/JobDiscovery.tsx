@@ -21,15 +21,9 @@ export default function JobDiscovery() {
   return (
     <div 
       className="min-h-screen bg-gradient-background flex items-center justify-center p-4 relative overflow-hidden"
-      style={{
-        backgroundImage: `url(${heroImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundBlendMode: 'overlay'
-      }}
     >
-      {/* Ambient glow effects */}
-      <div className="absolute inset-0 bg-gradient-radial from-primary/5 via-transparent to-transparent pointer-events-none" />
+      {/* Subtle light effects */}
+      <div className="absolute inset-0 bg-gradient-radial from-primary/3 via-transparent to-transparent pointer-events-none" />
       
       <div className="w-full max-w-2xl mx-auto">
         {state !== "success" && (
