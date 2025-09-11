@@ -73,12 +73,12 @@ const AIChatInput = ({
 
   const containerVariants = {
     collapsed: {
-      height: 68,
+      height: 80,
       boxShadow: "var(--shadow-futuristic)",
       transition: { type: "spring" as const, stiffness: 120, damping: 18 },
     },
     expanded: {
-      height: 128,
+      height: 150,
       boxShadow: "var(--glow-primary)",
       transition: { type: "spring" as const, stiffness: 120, damping: 18 },
     },
@@ -144,7 +144,7 @@ const AIChatInput = ({
         >
           <div className="flex flex-col items-stretch w-full h-full">
             {/* Input Row */}
-            <div className="flex items-center gap-2 p-3 rounded-full max-w-5xl w-full">
+            <div className="flex items-start gap-2 p-3 rounded-full max-w-5xl w-full">
               <button
                 className="p-3 rounded-full hover:bg-accent transition text-foreground"
                 title="Attach file"
@@ -161,22 +161,22 @@ const AIChatInput = ({
                   onChange={(e) => onInputChange(e.target.value)}
                   onKeyDown={onKeyPress}
                   disabled={state === "processing"}
-                  rows={1}
-                  className="flex-1 border-0 outline-0 rounded-md py-2 text-base bg-transparent w-full font-normal text-foreground resize-none"
-                  style={{ position: "relative", zIndex: 1 }}
+                  rows={2}
+                  className="flex-1 border-0 outline-0 rounded-md py-2 text-base bg-transparent w-full font-normal text-foreground resize-none leading-relaxed"
+                  style={{ position: "relative", zIndex: 2 }}
                   onFocus={handleActivate}
                 />
-                <div className="absolute left-0 top-0 w-full h-full pointer-events-none flex items-center px-3 py-2">
+                <div className="absolute left-0 top-0 w-full h-full pointer-events-none flex items-start px-3 pt-2">
                   <AnimatePresence mode="wait">
                     {showPlaceholder && !isActive && !inputValue && (
                       <motion.span
                         key={hasMessages ? "follow-up" : placeholderIndex}
-                        className="absolute left-0 top-1/2 -translate-y-1/2 text-muted-foreground select-none pointer-events-none"
+                        className="text-muted-foreground select-none pointer-events-none leading-relaxed"
                         style={{
                           whiteSpace: "nowrap",
                           overflow: "hidden",
                           textOverflow: "ellipsis",
-                          zIndex: 0,
+                          zIndex: 1,
                         }}
                         variants={placeholderContainerVariants}
                         initial="initial"
