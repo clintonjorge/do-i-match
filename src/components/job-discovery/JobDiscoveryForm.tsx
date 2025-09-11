@@ -1,6 +1,5 @@
 import { LiquidButton } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Sparkles } from "lucide-react";
 import type { JobDiscoveryState } from "@/types/job";
 
 interface JobDiscoveryFormProps {
@@ -46,19 +45,9 @@ export const JobDiscoveryForm = ({
         onClick={onSubmit}
         disabled={state === "processing" || !inputValue.trim()}
         size="lg"
-        className="px-12 group"
+        className="px-12 group text-black"
       >
-        {state === "processing" ? (
-          <>
-            <Loader2 className="w-5 h-5 animate-spin-slow" />
-            Thinking...
-          </>
-        ) : (
-          <>
-            <Sparkles className="w-5 h-5" />
-            I'm feeling lucky
-          </>
-        )}
+        {state === "processing" ? "Thinking..." : "I'm feeling lucky"}
       </LiquidButton>
     </div>
   );
