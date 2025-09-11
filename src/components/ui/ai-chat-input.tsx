@@ -125,10 +125,10 @@ const AIChatInput = ({
 
   return (
     <div className="sticky bottom-0 bg-background/80 backdrop-blur-sm border-t border-border p-4">
-      <div className="w-full max-w-4xl mx-auto flex justify-center">
+      <div className="w-full max-w-6xl mx-auto flex justify-center">
         <motion.div
           ref={wrapperRef}
-          className={`w-full max-w-3xl bg-card border-2 ${
+          className={`w-full max-w-5xl bg-card border-2 ${
             state === "processing" 
               ? "animate-glow-pulse border-primary bg-gradient-processing bg-[length:200%_100%]" 
               : "border-border"
@@ -144,7 +144,7 @@ const AIChatInput = ({
         >
           <div className="flex flex-col items-stretch w-full h-full">
             {/* Input Row */}
-            <div className="flex items-center gap-2 p-3 rounded-full max-w-3xl w-full">
+            <div className="flex items-center gap-2 p-3 rounded-full max-w-5xl w-full">
               <button
                 className="p-3 rounded-full hover:bg-accent transition text-foreground"
                 title="Attach file"
