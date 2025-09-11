@@ -8,7 +8,7 @@ interface JobDiscoveryErrorProps {
 export const JobDiscoveryError = ({ onReset }: JobDiscoveryErrorProps) => {
   return (
     <div className="text-center space-y-4 animate-fade-in-up">
-      <p className="text-destructive font-space text-lg">
+      <p className="text-destructive text-lg">
         Something went wrong. Please try again.
       </p>
       <Button variant="ghostFuturistic" onClick={onReset}>

@@ -28,7 +28,7 @@ export const JobDiscoveryForm = ({
           disabled={state === "processing"}
           rows={5}
           className={`
-            w-full max-w-lg mx-auto px-6 py-4 text-lg font-space bg-card/80 backdrop-blur-sm resize-none
+            w-full max-w-lg mx-auto px-6 py-4 text-lg bg-card/80 backdrop-blur-sm resize-none
             border-2 transition-all duration-300 rounded-2xl
             ${state === "processing" 
               ? "animate-glow-pulse border-primary bg-gradient-processing bg-[length:200%_100%]" 
@@ -45,7 +45,7 @@ export const JobDiscoveryForm = ({
         onClick={onSubmit}
         disabled={state === "processing" || !inputValue.trim()}
         size="lg"
-        className="px-12 group text-black font-space"
+        className="px-12 group text-black"
       >
         {state === "processing" ? "Thinking..." : "I'm feeling lucky"}
       </LiquidButton>

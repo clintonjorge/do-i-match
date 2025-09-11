@@ -30,11 +30,11 @@ export const JobDiscoverySuccess = ({ result, onReset }: JobDiscoverySuccessProp
         <div className="text-center space-y-3">
           <div className="flex items-center justify-center gap-3">
             <Sparkles className="w-8 h-8 text-primary animate-pulse" />
-            <h2 className="text-3xl md:text-4xl font-bold font-space bg-gradient-primary bg-clip-text text-transparent">
+            <h2 className="text-3xl md:text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">
               Perfect Match Found! 🚀
             </h2>
           </div>
-          <p className="text-lg text-muted-foreground font-space">
+          <p className="text-lg text-muted-foreground">
             {hasMultipleJobs ? `Found ${jobs.length} matching opportunities` : "Here's your AI-matched career opportunity"}
           </p>
         </div>
@@ -42,7 +42,7 @@ export const JobDiscoverySuccess = ({ result, onReset }: JobDiscoverySuccessProp
         <div className="bg-secondary/50 rounded-lg p-6 space-y-4 border border-primary/10">
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
             <div className="space-y-2">
-              <h3 className="text-2xl font-semibold font-space text-primary">
+              <h3 className="text-2xl font-semibold text-primary">
                 {displayJob?.job_title || "AI-Matched Career Opportunity"}
               </h3>
               
@@ -65,7 +65,7 @@ export const JobDiscoverySuccess = ({ result, onReset }: JobDiscoverySuccessProp
             </div>
             
             {hasMultipleJobs && jobs.length > 1 && (
-              <Badge variant="secondary" className="font-space">
+              <Badge variant="secondary">
                 +{jobs.length - 1} more
               </Badge>
             )}
