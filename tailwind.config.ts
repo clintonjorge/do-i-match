@@ -119,6 +119,24 @@ export default {
           from: { transform: "rotate(0deg)" },
           to: { transform: "rotate(360deg)" },
         },
+        "liquid-morph": {
+          "0%, 100%": {
+            transform: "scale(1) rotate(0deg)",
+            borderRadius: "50% 40% 60% 30%"
+          },
+          "25%": {
+            transform: "scale(1.05) rotate(90deg)",
+            borderRadius: "30% 60% 40% 50%"
+          },
+          "50%": {
+            transform: "scale(0.95) rotate(180deg)",
+            borderRadius: "60% 30% 50% 40%"
+          },
+          "75%": {
+            transform: "scale(1.02) rotate(270deg)",
+            borderRadius: "40% 50% 30% 60%"
+          }
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -128,6 +146,7 @@ export default {
         "fade-in-up": "fade-in-up 0.6s ease-out",
         "success-glow": "success-glow 2s ease-in-out infinite",
         "spin-slow": "spin-slow 2s linear infinite",
+        "liquid-morph": "liquid-morph 4s ease-in-out infinite",
       },
     },
   },

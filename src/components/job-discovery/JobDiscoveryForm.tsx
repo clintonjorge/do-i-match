@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { LiquidGlassButton } from "@/components/ui/liquid-glass-button";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Sparkles } from "lucide-react";
 import type { JobDiscoveryState } from "@/types/job";
@@ -42,12 +43,12 @@ export const JobDiscoveryForm = ({
         )}
       </div>
 
-      <Button
+      <LiquidGlassButton
         onClick={onSubmit}
         disabled={state === "processing" || !inputValue.trim()}
-        variant={state === "processing" ? "processing" : "futuristic"}
+        variant={state === "processing" ? "processing" : "primary"}
         size="lg"
-        className="px-12"
+        className="px-12 group"
       >
         {state === "processing" ? (
           <>
@@ -60,7 +61,7 @@ export const JobDiscoveryForm = ({
             I'm feeling lucky
           </>
         )}
-      </Button>
+      </LiquidGlassButton>
     </div>
   );
 };

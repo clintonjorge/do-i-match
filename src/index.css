@@ -56,6 +56,26 @@ All colors MUST be HSL.
   }
 }
 
+@keyframes liquid-morph {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    border-radius: 50% 40% 60% 30%;
+  }
+  25% {
+    transform: scale(1.05) rotate(90deg);
+    border-radius: 30% 60% 40% 50%;
+  }
+  50% {
+    transform: scale(0.95) rotate(180deg);
+    border-radius: 60% 30% 50% 40%;
+  }
+  75% {
+    transform: scale(1.02) rotate(270deg);
+    border-radius: 40% 50% 30% 60%;
+  }
+  }
+}
+
 @layer base {
   * {
     @apply border-border;
