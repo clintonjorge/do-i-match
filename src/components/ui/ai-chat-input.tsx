@@ -4,6 +4,7 @@ import * as React from "react"
 import { useState, useEffect, useRef } from "react";
 import { Mic, Send } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 import type { JobDiscoveryState } from "@/types/job";
 
 const JOB_DISCOVERY_PLACEHOLDERS = [
@@ -122,10 +123,15 @@ const AIChatInput = ({
   };
 
   return (
-    <div className="sticky bottom-0 bg-background/80 backdrop-blur-sm border-t border-border p-4">
+    <div className={cn(
+      "w-full p-4 transition-all duration-500",
+      hasMessages ? "bg-background/80 backdrop-blur-sm border-t border-border" : ""
+    )}>
       <div className="w-full max-w-6xl mx-auto flex justify-center">
         <motion.div
           ref={wrapperRef}
+          layout
+          layoutId="chat-input"
           className={`w-full max-w-5xl bg-card border-2 ${
             state === "processing" 
               ? "animate-glow-pulse border-primary bg-gradient-processing bg-[length:200%_100%]" 
@@ -139,6 +145,7 @@ const AIChatInput = ({
             borderRadius: 32,
           }}
           onClick={handleActivate}
+          transition={{ type: "spring", stiffness: 120, damping: 18 }}
         >
           <div className="flex flex-col items-stretch w-full h-full">
             {/* Input Row */}
