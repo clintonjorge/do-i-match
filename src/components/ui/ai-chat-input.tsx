@@ -74,12 +74,12 @@ const AIChatInput = ({
   const containerVariants = {
     collapsed: {
       height: 68,
-      boxShadow: "0 2px 8px 0 hsl(var(--foreground) / 0.08)",
+      boxShadow: "var(--shadow-futuristic)",
       transition: { type: "spring" as const, stiffness: 120, damping: 18 },
     },
     expanded: {
       height: 128,
-      boxShadow: "0 8px 32px 0 hsl(var(--foreground) / 0.16)",
+      boxShadow: "var(--glow-primary)",
       transition: { type: "spring" as const, stiffness: 120, damping: 18 },
     },
   };
@@ -128,21 +128,23 @@ const AIChatInput = ({
       <div className="w-full max-w-4xl mx-auto flex justify-center">
         <motion.div
           ref={wrapperRef}
-          className={`w-full max-w-3xl ${state === "processing" ? "animate-glow-pulse" : ""}`}
-          variants={containerVariants}
-          animate={isActive || inputValue ? "expanded" : "collapsed"}
+          className={`w-full max-w-3xl bg-card border-2 ${
+            state === "processing" 
+              ? "animate-glow-pulse border-primary bg-gradient-processing bg-[length:200%_100%]" 
+              : "border-border"
+          }`}
+          variants={state === "processing" ? {} : containerVariants}
+          animate={state === "processing" ? undefined : (isActive || inputValue ? "expanded" : "collapsed")}
           initial="collapsed"
           style={{ 
             overflow: "hidden", 
-            borderRadius: 32, 
-            background: "hsl(var(--card))",
-            border: `2px solid ${state === "processing" ? "hsl(var(--primary))" : "hsl(var(--border))"}`,
+            borderRadius: 32,
           }}
           onClick={handleActivate}
         >
           <div className="flex flex-col items-stretch w-full h-full">
             {/* Input Row */}
-            <div className="flex items-center gap-2 p-3 rounded-full bg-card max-w-3xl w-full">
+            <div className="flex items-center gap-2 p-3 rounded-full max-w-3xl w-full">
               <button
                 className="p-3 rounded-full hover:bg-accent transition text-foreground"
                 title="Attach file"
