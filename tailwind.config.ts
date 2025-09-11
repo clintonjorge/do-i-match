@@ -119,59 +119,6 @@ export default {
           from: { transform: "rotate(0deg)" },
           to: { transform: "rotate(360deg)" },
         },
-        "gradient-shift": {
-          "0%, 100%": { 
-            backgroundPosition: "0% 50%" 
-          },
-          "50%": { 
-            backgroundPosition: "100% 50%" 
-          },
-        },
-        "float-particles": {
-          "0%, 100%": { 
-            transform: "translate(0px, 0px) scale(1)",
-            opacity: "0.3"
-          },
-          "33%": { 
-            transform: "translate(30px, -30px) scale(1.1)",
-            opacity: "0.6"
-          },
-          "66%": { 
-            transform: "translate(-20px, 20px) scale(0.9)",
-            opacity: "0.4"
-          },
-        },
-        "ambient-pulse": {
-          "0%, 100%": { 
-            opacity: "0.3",
-            transform: "scale(1)"
-          },
-          "50%": { 
-            opacity: "0.6",
-            transform: "scale(1.05)"
-          },
-        },
-        "light-ray": {
-          "0%": { 
-            transform: "translateX(-100%) rotate(-45deg)",
-            opacity: "0"
-          },
-          "50%": { 
-            opacity: "0.6"
-          },
-          "100%": { 
-            transform: "translateX(100vw) rotate(-45deg)",
-            opacity: "0"
-          },
-        },
-        "hero-breathe": {
-          "0%, 100%": { 
-            transform: "scale(1.02)"
-          },
-          "50%": { 
-            transform: "scale(1)"
-          },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -181,11 +128,6 @@ export default {
         "fade-in-up": "fade-in-up 0.6s ease-out",
         "success-glow": "success-glow 2s ease-in-out infinite",
         "spin-slow": "spin-slow 2s linear infinite",
-        "gradient-shift": "gradient-shift 8s ease-in-out infinite",
-        "float-particles": "float-particles 6s ease-in-out infinite",
-        "ambient-pulse": "ambient-pulse 4s ease-in-out infinite",
-        "light-ray": "light-ray 10s ease-in-out infinite",
-        "hero-breathe": "hero-breathe 6s ease-in-out infinite",
       },
     },
   },
