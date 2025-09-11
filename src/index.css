@@ -44,6 +44,8 @@ All colors MUST be HSL.
     --gradient-background: linear-gradient(180deg, hsl(218, 23%, 6%), hsl(220, 26%, 14%));
     --gradient-glow: linear-gradient(45deg, hsl(217, 91%, 60%), hsl(262, 100%, 75%), hsl(194, 100%, 60%));
     --gradient-processing: linear-gradient(90deg, hsl(217, 91%, 60%), hsl(262, 100%, 75%), hsl(194, 100%, 60%), hsl(217, 91%, 60%));
+    --gradient-animated: linear-gradient(-45deg, hsl(217, 91%, 60%), hsl(262, 100%, 75%), hsl(194, 100%, 60%), hsl(217, 91%, 60%));
+    --gradient-light-ray: linear-gradient(90deg, transparent, hsl(217, 91%, 60% / 0.6), transparent);
     
     /* Glows and shadows */
     --glow-primary: 0 0 30px hsl(217, 91%, 60% / 0.5);
