@@ -57,7 +57,7 @@ export const ChatContainer = ({ messages }: ChatContainerProps) => {
         className="h-full w-full"
         onScroll={handleScroll}
       >
-        <div className="w-full max-w-4xl mx-auto px-4">
+        <div className="w-full px-4">
           <div className="space-y-4 py-6">
             {messages.map((message) => (
               <ChatMessage key={message.id} message={message} />
