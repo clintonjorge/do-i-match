@@ -1,5 +1,13 @@
 export type JobDiscoveryState = "idle" | "processing" | "success" | "error";
 
+export interface ChatMessage {
+  id: string;
+  type: "user" | "assistant";
+  content: string;
+  timestamp: Date;
+  isProcessing?: boolean;
+}
+
 export interface JobMatch {
   job_title?: string;
   company?: string;

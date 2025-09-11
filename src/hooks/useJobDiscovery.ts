@@ -1,45 +1,86 @@
 import { useState, useCallback } from "react";
 import { jobService } from "@/services/jobService";
-import type { JobDiscoveryState, JobDiscoveryResponse } from "@/types/job";
+import type { JobDiscoveryState, JobDiscoveryResponse, ChatMessage } from "@/types/job";
 
 interface UseJobDiscoveryReturn {
   state: JobDiscoveryState;
   inputValue: string;
-  result: JobDiscoveryResponse | null;
+  messages: ChatMessage[];
   setInputValue: (value: string) => void;
   handleSubmit: () => Promise<void>;
-  handleReset: () => void;
+  handleClearChat: () => void;
   handleKeyPress: (e: React.KeyboardEvent) => void;
 }
 
 export const useJobDiscovery = (): UseJobDiscoveryReturn => {
   const [state, setState] = useState<JobDiscoveryState>("idle");
   const [inputValue, setInputValue] = useState("");
-  const [result, setResult] = useState<JobDiscoveryResponse | null>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
 
   const handleSubmit = useCallback(async () => {
     if (!inputValue.trim()) return;
     
+    const userMessage: ChatMessage = {
+      id: Date.now().toString(),
+      type: "user",
+      content: inputValue,
+      timestamp: new Date(),
+    };
+
+    const processingMessage: ChatMessage = {
+      id: (Date.now() + 1).toString(),
+      type: "assistant",
+      content: "",
+      timestamp: new Date(),
+      isProcessing: true,
+    };
+
+    setMessages(prev => [...prev, userMessage, processingMessage]);
     setState("processing");
     
+    const currentInput = inputValue;
+    setInputValue("");
+    
     try {
-      const response = await jobService.submitJobDiscovery({ input: inputValue });
-      setResult(response);
-      setState("success");
+      const response = await jobService.submitJobDiscovery({ input: currentInput });
+      
+      const assistantMessage: ChatMessage = {
+        id: processingMessage.id,
+        type: "assistant",
+        content: response.text_response || formatJobResponse(response),
+        timestamp: new Date(),
+      };
+
+      setMessages(prev => prev.map(msg => 
+        msg.id === processingMessage.id ? assistantMessage : msg
+      ));
+      setState("idle");
     } catch (error) {
       console.error("Job discovery error:", error);
-      setState("error");
+      
+      const errorMessage: ChatMessage = {
+        id: processingMessage.id,
+        type: "assistant",
+        content: "Sorry, I encountered an error. Please try again.",
+        timestamp: new Date(),
+      };
+
+      setMessages(prev => prev.map(msg => 
+        msg.id === processingMessage.id ? errorMessage : msg
+      ));
+      setState("idle");
     }
   }, [inputValue]);
 
-  const handleReset = useCallback(() => {
+  const handleClearChat = useCallback(() => {
     setState("idle");
     setInputValue("");
-    setResult(null);
+    setMessages([]);
   }, []);
 
   const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && state === "idle") {
+    if (e.key === "Enter" && !e.shiftKey && state !== "processing") {
+      e.preventDefault();
       handleSubmit();
     }
   }, [handleSubmit, state]);
@@ -47,10 +88,33 @@ export const useJobDiscovery = (): UseJobDiscoveryReturn => {
   return {
     state,
     inputValue,
-    result,
+    messages,
     setInputValue,
     handleSubmit,
-    handleReset,
+    handleClearChat,
     handleKeyPress,
   };
+};
+
+// Helper function to format job responses for display
+const formatJobResponse = (response: JobDiscoveryResponse): string => {
+  if (response.matching_job_openings?.length) {
+    return response.matching_job_openings.map(job => 
+      `🎯 **${job.job_title}** at **${job.company}**\n` +
+      `📍 ${job.location}\n` +
+      `💰 ${job.salary_range || 'Salary not specified'}\n\n` +
+      `${job.description}\n\n` +
+      `**Why this matches:** ${job.why_match}\n\n` +
+      `${job.application_link ? `[Apply Here](${job.application_link})` : ''}`
+    ).join('\n\n---\n\n');
+  }
+  
+  if (response.job_title) {
+    return `🎯 **${response.job_title}**\n` +
+           `🏢 ${response.company}\n` +
+           `📍 ${response.location}\n\n` +
+           `**Why this matches:** ${response.why_match}`;
+  }
+  
+  return response.description || "I found some opportunities for you, but couldn't format them properly.";
 };
