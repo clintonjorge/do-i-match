@@ -5,8 +5,6 @@ import {
   ChatInput,
 } from "@/components/job-discovery";
 import { AuroraBackground } from "@/components/ui/aurora-background";
-import { Button } from "@/components/ui/button";
-import { RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function JobDiscovery() {
@@ -16,7 +14,6 @@ export default function JobDiscovery() {
     messages,
     setInputValue,
     handleSubmit,
-    handleClearChat,
     handleKeyPress,
   } = useJobDiscovery();
 
@@ -36,20 +33,6 @@ export default function JobDiscovery() {
           hasMessages ? "max-w-4xl mx-auto" : "space-y-8 animate-fade-in-up"
         )}>
           <JobDiscoveryHero className={hasMessages ? "space-y-2" : ""} />
-          
-          {hasMessages && (
-            <div className="flex justify-center">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={handleClearChat}
-                className="text-xs"
-              >
-                <RotateCcw className="w-3 h-3 mr-1" />
-                Clear Chat
-              </Button>
-            </div>
-          )}
         </div>
       </div>
 
