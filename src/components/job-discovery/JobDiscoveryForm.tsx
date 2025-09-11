@@ -45,7 +45,7 @@ export const JobDiscoveryForm = ({
         onClick={onSubmit}
         disabled={state === "processing" || !inputValue.trim()}
         size="lg"
-        className="px-12 group text-black"
+        className="px-12 group text-black font-space"
       >
         {state === "processing" ? "Thinking..." : "I'm feeling lucky"}
       </LiquidButton>
