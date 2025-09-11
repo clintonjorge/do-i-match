@@ -71,7 +71,7 @@ const AIChatInput = ({
 
   const containerVariants = {
     collapsed: {
-      height: 50,
+      height: 70,
       boxShadow: "var(--shadow-futuristic)",
       transition: { type: "spring" as const, stiffness: 120, damping: 18 },
     },
