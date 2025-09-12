@@ -48,6 +48,7 @@ export const useJobDiscovery = (): UseJobDiscoveryReturn => {
         type: "assistant",
         content: response.text_response || formatJobResponse(response),
         timestamp: new Date(),
+        audio: response.audio,
       };
 
       setMessages(prev => prev.map(msg => 

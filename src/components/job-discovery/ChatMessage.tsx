@@ -1,6 +1,8 @@
 import { cn } from "@/lib/utils";
 import type { ChatMessage as ChatMessageType } from "@/types/job";
 import ReactMarkdown from 'react-markdown';
+import { useState } from 'react';
+import { Button } from "@/components/ui/button";
 
 interface ChatMessageProps {
   message: ChatMessageType;
@@ -8,6 +10,27 @@ interface ChatMessageProps {
 
 export const ChatMessage = ({ message }: ChatMessageProps) => {
   const isUser = message.type === "user";
+  const [isPlaying, setIsPlaying] = useState(false);
+  
+  const handlePlayAudio = async (audioId: string) => {
+    try {
+      setIsPlaying(true);
+      // Create audio URL from the file ID - this would need to be adjusted based on your API
+      const audioUrl = `https://api.your-domain.com/audio/${audioId}`;
+      const audio = new Audio(audioUrl);
+      
+      audio.onended = () => setIsPlaying(false);
+      audio.onerror = () => {
+        setIsPlaying(false);
+        console.error('Error playing audio');
+      };
+      
+      await audio.play();
+    } catch (error) {
+      setIsPlaying(false);
+      console.error('Failed to play audio:', error);
+    }
+  };
   
   return (
     <div className={cn(
@@ -44,6 +67,22 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
             </ReactMarkdown>
           </div>
         )}
+        
+        {/* Audio playback button */}
+        {message.audio && message.audio.length > 0 && (
+          <div className="mt-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePlayAudio(message.audio![0].id)}
+              disabled={isPlaying}
+              className="text-xs"
+            >
+              {isPlaying ? "Playing..." : "🔊 Read Transcript"}
+            </Button>
+          </div>
+        )}
+        
         <div className={cn(
           "text-xs mt-2 opacity-70",
           isUser ? "text-primary-foreground/70" : "text-muted-foreground"

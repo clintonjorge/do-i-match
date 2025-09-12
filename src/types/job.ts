@@ -1,11 +1,21 @@
 export type JobDiscoveryState = "idle" | "processing" | "success" | "error";
 
+export interface AudioFile {
+  mimeType: string;
+  fileType: string;
+  fileExtension: string;
+  fileName: string;
+  id: string;
+  fileSize: string;
+}
+
 export interface ChatMessage {
   id: string;
   type: "user" | "assistant";
   content: string;
   timestamp: Date;
   isProcessing?: boolean;
+  audio?: AudioFile[];
 }
 
 export interface JobMatch {
@@ -25,6 +35,7 @@ export interface JobDiscoveryResponse {
   description?: string;
   link?: string;
   text_response?: string; // For plain text AI responses
+  audio?: AudioFile[]; // For audio transcript responses
   // Legacy fields for backward compatibility
   job_title?: string;
   company?: string;

@@ -50,16 +50,29 @@ export const jobService = {
     try {
       console.log("Processing webhook response:", data);
       
+      // Handle new array-based response format
+      if (Array.isArray(data) && data.length > 0 && data[0].message) {
+        console.log("Found array response with message, extracting content and audio");
+        const messageData = data[0].message;
+        return {
+          text_response: messageData.content,
+          audio: messageData.audio || []
+        };
+      }
+      
       // Handle output field from webhook
       if (data.output) {
         console.log("Found data.output, extracting as text response");
         return { text_response: data.output };
       }
       
-      // Handle message.content structure (new AI response format)
+      // Handle message.content structure (legacy AI response format)
       if (data.message?.content) {
         console.log("Found message.content, extracting as text response");
-        return { text_response: data.message.content };
+        return { 
+          text_response: data.message.content,
+          audio: data.message.audio || []
+        };
       }
       
       // Handle nested response structure
