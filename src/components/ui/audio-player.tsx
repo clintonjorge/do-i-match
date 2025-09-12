@@ -1,8 +1,9 @@
-import React, { useState, useRef, useEffect } from "react"
+import React, { useState, useRef, useEffect, useCallback } from "react"
 import { Button } from "./button"
 import { Slider } from "./slider"
 import { Play, Pause, Square } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { isIOSSafari, isMobile, createAudioContext, unlockAudioContext } from "@/utils/deviceDetection"
 
 interface AudioPlayerProps {
   audioFile: {
@@ -28,58 +29,111 @@ export const AudioPlayer = React.forwardRef<
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [audioInitialized, setAudioInitialized] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const audioContextRef = useRef<AudioContext | null>(null)
 
-  useEffect(() => {
-    // Create audio element and set up event listeners
-    let audioUrl: string
-
-    if (audioFile.data) {
-      audioUrl = `data:audio/mp3;base64,${audioFile.data}`
-    } else if (audioFile.id) {
-      audioUrl = `https://api.your-domain.com/audio/${audioFile.id}`
-    } else {
-      return
+  // Initialize audio context for iOS
+  const initializeAudioContext = useCallback(async () => {
+    if (isMobile() && !audioContextRef.current) {
+      audioContextRef.current = createAudioContext()
+      if (audioContextRef.current) {
+        await unlockAudioContext(audioContextRef.current)
+      }
     }
+  }, [])
 
-    const audio = new Audio(audioUrl)
-    audioRef.current = audio
+  // Create audio element only when needed (user interaction)
+  const initializeAudio = useCallback(async () => {
+    if (audioInitialized || !audioFile.data && !audioFile.id) return
 
-    const updateTime = () => {
-      const time = audio.currentTime
-      setCurrentTime(time)
-      onTimeUpdate?.(time)
-    }
-    const updateDuration = () => setDuration(audio.duration || 0)
-    const handleEnded = () => {
-      setIsPlaying(false)
-      setCurrentTime(0)
-    }
-    const handleLoadStart = () => setIsLoading(true)
-    const handleCanPlay = () => setIsLoading(false)
+    try {
+      setIsLoading(true)
+      setError(null)
 
-    // Add event listeners
-    audio.addEventListener('timeupdate', updateTime)
-    audio.addEventListener('loadedmetadata', updateDuration)
-    audio.addEventListener('ended', handleEnded)
-    audio.addEventListener('loadstart', handleLoadStart)
-    audio.addEventListener('canplay', handleCanPlay)
+      // Initialize audio context for mobile
+      await initializeAudioContext()
 
-    return () => {
-      // Clean up event listeners
-      audio.removeEventListener('timeupdate', updateTime)
-      audio.removeEventListener('loadedmetadata', updateDuration)
-      audio.removeEventListener('ended', handleEnded)
-      audio.removeEventListener('loadstart', handleLoadStart)
-      audio.removeEventListener('canplay', handleCanPlay)
+      let audioUrl: string
+      if (audioFile.data) {
+        // For iOS Safari, handle base64 data more carefully
+        if (isIOSSafari() && audioFile.data.length > 2 * 1024 * 1024) {
+          throw new Error('Audio file too large for iOS Safari')
+        }
+        audioUrl = `data:audio/mp3;base64,${audioFile.data}`
+      } else if (audioFile.id) {
+        audioUrl = `https://api.your-domain.com/audio/${audioFile.id}`
+      } else {
+        return
+      }
+
+      const audio = new Audio()
       
-      // Clean up audio element
-      audio.pause()
-      audioRef.current = null
+      // Set up event listeners before setting src
+      const updateTime = () => {
+        const time = audio.currentTime
+        setCurrentTime(time)
+        onTimeUpdate?.(time)
+      }
+      
+      const updateDuration = () => {
+        setDuration(audio.duration || 0)
+        setIsLoading(false)
+      }
+      
+      const handleEnded = () => {
+        setIsPlaying(false)
+        setCurrentTime(0)
+      }
+      
+      const handleError = (e: Event) => {
+        console.error('Audio loading error:', e)
+        setError('Failed to load audio')
+        setIsLoading(false)
+        setIsPlaying(false)
+      }
+
+      audio.addEventListener('timeupdate', updateTime)
+      audio.addEventListener('loadedmetadata', updateDuration)
+      audio.addEventListener('ended', handleEnded)
+      audio.addEventListener('error', handleError)
+      audio.addEventListener('canplay', () => setIsLoading(false))
+
+      // Set source and load
+      audio.src = audioUrl
+      audio.load()
+      
+      audioRef.current = audio
+      setAudioInitialized(true)
+
+    } catch (err) {
+      console.error('Failed to initialize audio:', err)
+      setError(err instanceof Error ? err.message : 'Failed to initialize audio')
+      setIsLoading(false)
     }
-  }, [audioFile])
+  }, [audioFile, audioInitialized, initializeAudioContext, onTimeUpdate])
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current = null
+      }
+      if (audioContextRef.current) {
+        audioContextRef.current.close()
+        audioContextRef.current = null
+      }
+    }
+  }, [])
 
   const handlePlayPause = async () => {
+    // Initialize audio on first user interaction
+    if (!audioInitialized) {
+      await initializeAudio()
+    }
+
     const audio = audioRef.current
     if (!audio) return
 
@@ -88,11 +142,18 @@ export const AudioPlayer = React.forwardRef<
         audio.pause()
         setIsPlaying(false)
       } else {
+        // Ensure audio context is unlocked on mobile
+        if (audioContextRef.current) {
+          await unlockAudioContext(audioContextRef.current)
+        }
+        
         await audio.play()
         setIsPlaying(true)
+        setError(null)
       }
     } catch (error) {
       console.error('Failed to play/pause audio:', error)
+      setError('Failed to play audio')
       setIsPlaying(false)
     }
   }
@@ -123,6 +184,10 @@ export const AudioPlayer = React.forwardRef<
 
   return (
     <div className={cn("flex items-center gap-3 p-3 bg-muted/30 rounded-lg", className)}>
+      {error && (
+        <div className="text-xs text-destructive mb-2">{error}</div>
+      )}
+      
       {/* Control buttons */}
       <div className="flex items-center gap-1">
         <Button
@@ -130,7 +195,11 @@ export const AudioPlayer = React.forwardRef<
           size="sm"
           onClick={handlePlayPause}
           disabled={isLoading}
-          className="h-8 w-8 p-0"
+          className={cn(
+            "mobile-touch-target ios-audio-button touch-manipulation mobile-no-select",
+            isMobile() ? "h-11 w-11" : "h-8 w-8",
+            "p-0"
+          )}
         >
           {isLoading ? (
             <div className="h-3 w-3 animate-spin rounded-full border border-muted-foreground border-t-transparent" />
@@ -146,7 +215,11 @@ export const AudioPlayer = React.forwardRef<
           size="sm"
           onClick={handleStop}
           disabled={isLoading || (!isPlaying && currentTime === 0)}
-          className="h-8 w-8 p-0"
+          className={cn(
+            "mobile-touch-target ios-audio-button touch-manipulation mobile-no-select",
+            isMobile() ? "h-11 w-11" : "h-8 w-8",
+            "p-0"
+          )}
         >
           <Square className="h-3 w-3" />
         </Button>

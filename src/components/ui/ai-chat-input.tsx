@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { AIVoiceInput } from "./ai-voice-input";
 import { useVoiceRecognition } from "@/hooks/useVoiceRecognition";
+import { isMobile } from "@/utils/deviceDetection";
 import type { JobDiscoveryState } from "@/types/job";
 
 const JOB_DISCOVERY_PLACEHOLDERS = [
@@ -175,7 +176,8 @@ const AIChatInput = ({
   return (
     <div className={cn(
       "w-full p-4 transition-all duration-500",
-      hasMessages ? "bg-background/80 backdrop-blur-sm border-t border-border" : ""
+      hasMessages ? "bg-background/80 backdrop-blur-sm border-t border-border" : "",
+      isMobile() ? "ios-safe-area" : ""
     )}>
       <div className="w-full max-w-6xl mx-auto flex justify-center">
         <motion.div
@@ -264,7 +266,11 @@ const AIChatInput = ({
                 </div>
               )}
               <button
-                className="flex items-center gap-1 bg-primary hover:bg-primary/90 text-primary-foreground p-3 rounded-full font-medium justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                className={cn(
+                  "flex items-center gap-1 bg-primary hover:bg-primary/90 text-primary-foreground p-3 rounded-full font-medium justify-center disabled:opacity-50 disabled:cursor-not-allowed",
+                  "mobile-touch-target touch-manipulation mobile-no-select",
+                  isMobile() ? "min-h-11 min-w-11" : "p-3"
+                )}
                 title="Send"
                 type="button"
                 disabled={state === "processing" || (isRecording 

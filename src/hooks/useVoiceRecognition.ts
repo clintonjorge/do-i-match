@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { supportsWebSpeechAPI, isIOSSafari, isMobile } from "@/utils/deviceDetection";
 
 // Extend the Window interface to include speech recognition
 declare global {
@@ -76,11 +77,16 @@ export const useVoiceRecognition = (): UseVoiceRecognitionReturn => {
 
   // Check browser support
   useEffect(() => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (SpeechRecognition) {
+    if (supportsWebSpeechAPI()) {
       setIsSupported(true);
     } else {
-      setError("Speech recognition is not supported in this browser");
+      if (isIOSSafari()) {
+        setError("Voice input is not supported in iOS Safari. Please try using Chrome or type your message.");
+      } else if (isMobile()) {
+        setError("Voice input may not work reliably on this mobile browser. Please try typing your message.");
+      } else {
+        setError("Speech recognition is not supported in this browser");
+      }
     }
   }, []);
 

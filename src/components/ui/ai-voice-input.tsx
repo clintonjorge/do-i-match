@@ -3,6 +3,7 @@
 import { Mic } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { isMobile } from "@/utils/deviceDetection";
 
 interface AIVoiceInputProps {
   onStart?: (e?: React.MouseEvent) => void;
@@ -53,7 +54,9 @@ export function AIVoiceInput({
     <div className={cn("flex flex-col items-center gap-1", className)}>
       <button
         className={cn(
-          "group w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300",
+          "group rounded-full flex items-center justify-center transition-all duration-300",
+          "mobile-touch-target touch-manipulation mobile-no-select",
+          isMobile() ? "w-11 h-11" : "w-10 h-10",
           isRecording
             ? "bg-primary/10 hover:bg-primary/20"
             : "hover:bg-accent",
