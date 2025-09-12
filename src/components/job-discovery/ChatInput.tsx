@@ -6,7 +6,7 @@ interface ChatInputProps {
   state: JobDiscoveryState;
   onInputChange: (value: string) => void;
   onKeyPress: (e: React.KeyboardEvent) => void;
-  onSubmit: () => void;
+  onSubmit: (textToSubmit?: string) => void;
   hasMessages: boolean;
 }
 
