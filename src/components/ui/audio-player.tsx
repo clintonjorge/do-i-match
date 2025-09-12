@@ -26,35 +26,7 @@ export const AudioPlayer = ({ audioFile, className }: AudioPlayerProps) => {
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
-    const audio = audioRef.current
-    if (!audio) return
-
-    const updateTime = () => setCurrentTime(audio.currentTime)
-    const updateDuration = () => setDuration(audio.duration || 0)
-    const handleEnded = () => {
-      setIsPlaying(false)
-      setCurrentTime(0)
-    }
-    const handleLoadStart = () => setIsLoading(true)
-    const handleCanPlay = () => setIsLoading(false)
-
-    audio.addEventListener('timeupdate', updateTime)
-    audio.addEventListener('loadedmetadata', updateDuration)
-    audio.addEventListener('ended', handleEnded)
-    audio.addEventListener('loadstart', handleLoadStart)
-    audio.addEventListener('canplay', handleCanPlay)
-
-    return () => {
-      audio.removeEventListener('timeupdate', updateTime)
-      audio.removeEventListener('loadedmetadata', updateDuration)
-      audio.removeEventListener('ended', handleEnded)
-      audio.removeEventListener('loadstart', handleLoadStart)
-      audio.removeEventListener('canplay', handleCanPlay)
-    }
-  }, [])
-
-  useEffect(() => {
-    // Create audio element when component mounts
+    // Create audio element and set up event listeners
     let audioUrl: string
 
     if (audioFile.data) {
@@ -68,11 +40,33 @@ export const AudioPlayer = ({ audioFile, className }: AudioPlayerProps) => {
     const audio = new Audio(audioUrl)
     audioRef.current = audio
 
+    const updateTime = () => setCurrentTime(audio.currentTime)
+    const updateDuration = () => setDuration(audio.duration || 0)
+    const handleEnded = () => {
+      setIsPlaying(false)
+      setCurrentTime(0)
+    }
+    const handleLoadStart = () => setIsLoading(true)
+    const handleCanPlay = () => setIsLoading(false)
+
+    // Add event listeners
+    audio.addEventListener('timeupdate', updateTime)
+    audio.addEventListener('loadedmetadata', updateDuration)
+    audio.addEventListener('ended', handleEnded)
+    audio.addEventListener('loadstart', handleLoadStart)
+    audio.addEventListener('canplay', handleCanPlay)
+
     return () => {
-      if (audioRef.current) {
-        audioRef.current.pause()
-        audioRef.current = null
-      }
+      // Clean up event listeners
+      audio.removeEventListener('timeupdate', updateTime)
+      audio.removeEventListener('loadedmetadata', updateDuration)
+      audio.removeEventListener('ended', handleEnded)
+      audio.removeEventListener('loadstart', handleLoadStart)
+      audio.removeEventListener('canplay', handleCanPlay)
+      
+      // Clean up audio element
+      audio.pause()
+      audioRef.current = null
     }
   }, [audioFile])
 

@@ -22,19 +22,6 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
 
     return (
       <div className={cn("relative flex w-full touch-none select-none items-center", className)}>
-        <input
-          ref={ref}
-          type="range"
-          min={min}
-          max={max}
-          step={step}
-          value={value}
-          onChange={handleChange}
-          disabled={disabled}
-          className="sr-only"
-          {...props}
-        />
-        
         {/* Track background */}
         <div className="relative h-1.5 w-full grow overflow-hidden rounded-full bg-muted">
           {/* Progress fill */}
@@ -54,8 +41,9 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
           style={{ left: `${percentage}%`, transform: 'translateX(-50%)' }}
         />
         
-        {/* Invisible input overlay for interactions */}
+        {/* Interactive input overlay */}
         <input
+          ref={ref}
           type="range"
           min={min}
           max={max}
@@ -67,6 +55,7 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
             "absolute inset-0 h-full w-full cursor-pointer opacity-0",
             disabled && "cursor-not-allowed"
           )}
+          {...props}
         />
       </div>
     )
