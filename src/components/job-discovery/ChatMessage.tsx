@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import type { ChatMessage as ChatMessageType } from "@/types/job";
+import ReactMarkdown from 'react-markdown';
 
 interface ChatMessageProps {
   message: ChatMessageType;
@@ -29,7 +30,19 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
             <span className="text-muted-foreground">Thinking...</span>
           </div>
         ) : (
-          <div className="whitespace-pre-wrap">{message.content}</div>
+          <div className="prose prose-sm max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+            <ReactMarkdown 
+              components={{
+                a: ({ node, ...props }) => (
+                  <a {...props} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline" />
+                ),
+                p: ({ node, ...props }) => <p {...props} className="mb-2 last:mb-0" />,
+                strong: ({ node, ...props }) => <strong {...props} className="font-semibold" />,
+              }}
+            >
+              {message.content}
+            </ReactMarkdown>
+          </div>
         )}
         <div className={cn(
           "text-xs mt-2 opacity-70",
