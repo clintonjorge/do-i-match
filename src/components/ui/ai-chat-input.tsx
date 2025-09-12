@@ -270,6 +270,42 @@ const AIChatInput = ({
               </button>
             </div>
 
+            {/* Live Transcript Preview */}
+            <AnimatePresence>
+              {isRecording && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="px-6 pb-3"
+                >
+                  <div className="bg-muted/50 rounded-lg p-3 border border-border/50">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                        {transcript ? "Listening" : "Start speaking..."}
+                      </span>
+                      {duration > 0 && (
+                        <span className="text-xs text-muted-foreground ml-auto">
+                          {Math.floor(duration / 1000)}s
+                        </span>
+                      )}
+                    </div>
+                    {transcript ? (
+                      <p className="text-sm text-foreground/80 leading-relaxed">
+                        {transcript}
+                      </p>
+                    ) : (
+                      <p className="text-sm text-muted-foreground italic">
+                        Your voice will appear here in real-time...
+                      </p>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
           </div>
         </motion.div>
       </div>
