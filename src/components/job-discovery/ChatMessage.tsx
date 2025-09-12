@@ -1,8 +1,7 @@
 import { cn } from "@/lib/utils";
 import type { ChatMessage as ChatMessageType } from "@/types/job";
 import ReactMarkdown from 'react-markdown';
-import { useState } from 'react';
-import { Button } from "@/components/ui/button";
+import { AudioPlayer } from "@/components/ui/audio-player";
 
 interface ChatMessageProps {
   message: ChatMessageType;
@@ -10,40 +9,6 @@ interface ChatMessageProps {
 
 export const ChatMessage = ({ message }: ChatMessageProps) => {
   const isUser = message.type === "user";
-  const [isPlaying, setIsPlaying] = useState(false);
-  
-  const handlePlayAudio = async (audioFile: any) => {
-    try {
-      setIsPlaying(true);
-      
-      let audioUrl: string;
-      
-      // Handle base64 audio data
-      if (audioFile.data) {
-        audioUrl = `data:audio/mp3;base64,${audioFile.data}`;
-      }
-      // Fallback for legacy URL-based audio
-      else if (audioFile.id) {
-        audioUrl = `https://api.your-domain.com/audio/${audioFile.id}`;
-      }
-      else {
-        throw new Error('No audio data available');
-      }
-      
-      const audio = new Audio(audioUrl);
-      
-      audio.onended = () => setIsPlaying(false);
-      audio.onerror = () => {
-        setIsPlaying(false);
-        console.error('Error playing audio');
-      };
-      
-      await audio.play();
-    } catch (error) {
-      setIsPlaying(false);
-      console.error('Failed to play audio:', error);
-    }
-  };
   
   return (
     <div className={cn(
@@ -81,18 +46,10 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
           </div>
         )}
         
-        {/* Audio playback button */}
+        {/* Audio player */}
         {message.audio && message.audio.length > 0 && (
           <div className="mt-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handlePlayAudio(message.audio![0])}
-              disabled={isPlaying}
-              className="text-xs"
-            >
-              {isPlaying ? "Playing..." : "🔊 Play Audio"}
-            </Button>
+            <AudioPlayer audioFile={message.audio[0]} />
           </div>
         )}
         
