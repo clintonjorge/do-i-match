@@ -42,11 +42,22 @@ export const useJobDiscovery = (): UseJobDiscoveryReturn => {
     
     try {
       const response = await jobService.submitJobDiscovery({ input: currentInput });
+      console.log("Received response in useJobDiscovery:", response);
+      
+      // Determine content to display
+      let content: string;
+      if (response.text_response && response.text_response.trim()) {
+        console.log("Using text_response:", response.text_response);
+        content = response.text_response;
+      } else {
+        console.log("No text_response found, trying to format job response");
+        content = formatJobResponse(response);
+      }
       
       const assistantMessage: ChatMessage = {
         id: processingMessage.id,
         type: "assistant",
-        content: response.text_response || formatJobResponse(response),
+        content,
         timestamp: new Date(),
         audio: response.audio,
       };
@@ -92,6 +103,8 @@ export const useJobDiscovery = (): UseJobDiscoveryReturn => {
 
 // Helper function to format job responses for display
 const formatJobResponse = (response: JobDiscoveryResponse): string => {
+  console.log("formatJobResponse called with:", response);
+  
   if (response.matching_job_openings?.length) {
     return response.matching_job_openings.map(job => 
       `🎯 **${job.job_title}** at **${job.company}**\n` +
@@ -110,5 +123,7 @@ const formatJobResponse = (response: JobDiscoveryResponse): string => {
            `**Why this matches:** ${response.why_match}`;
   }
   
-  return response.description || "I found some opportunities for you, but couldn't format them properly.";
+  // Better fallback with debugging info
+  console.warn("No structured job data found in response, using fallback");
+  return response.description || "I apologize, but I received an unexpected response format. Please try again.";
 };

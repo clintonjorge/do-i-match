@@ -49,16 +49,22 @@ export const jobService = {
   processWebhookResponse(data: any): JobDiscoveryResponse {
     try {
       console.log("Processing webhook response:", data);
+      console.log("Response type:", typeof data);
+      console.log("Is array:", Array.isArray(data));
       
       // Handle new array-based response format with nested content structure
       if (Array.isArray(data) && data.length > 0 && data[0].message) {
         console.log("Found array response with message, extracting content and audio");
         const messageData = data[0].message;
+        console.log("Message data:", messageData);
+        console.log("Content type:", typeof messageData.content);
         
         // Handle new nested content structure
         if (messageData.content && typeof messageData.content === 'object') {
+          console.log("Processing nested content structure:", messageData.content);
           const audioFiles = [];
           if (messageData.content.audio?.data) {
+            console.log("Found audio data, adding to response");
             audioFiles.push({
               data: messageData.content.audio.data,
               mimeType: 'audio/mp3',
@@ -67,17 +73,25 @@ export const jobService = {
             });
           }
           
-          return {
-            text_response: messageData.content.text || messageData.content,
+          const textResponse = messageData.content.text || messageData.content;
+          console.log("Extracted text response:", textResponse);
+          
+          const result = {
+            text_response: textResponse,
             audio: audioFiles
           };
+          console.log("Returning processed response:", result);
+          return result;
         }
         
         // Fallback for legacy format
-        return {
+        console.log("Using legacy format fallback");
+        const legacyResult = {
           text_response: messageData.content,
           audio: messageData.audio || []
         };
+        console.log("Legacy result:", legacyResult);
+        return legacyResult;
       }
       
       // Handle output field from webhook
