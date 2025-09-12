@@ -1,13 +1,32 @@
-import { cn } from "@/lib/utils";
-import type { ChatMessage as ChatMessageType } from "@/types/job";
-import ReactMarkdown from 'react-markdown';
+import React, { useState, useRef } from "react";
+import ReactMarkdown from "react-markdown";
+import { ChatMessage as ChatMessageType } from "@/types/job";
 import { AudioPlayer } from "@/components/ui/audio-player";
+import { SynchronizedText } from "@/components/ui/synchronized-text";
+import { cn } from "@/lib/utils";
 
 interface ChatMessageProps {
   message: ChatMessageType;
 }
 
 export const ChatMessage = ({ message }: ChatMessageProps) => {
+  const [currentAudioTime, setCurrentAudioTime] = useState(0)
+  const audioPlayerRef = useRef<any>(null)
+
+  const handleWordClick = (timestamp: number) => {
+    // Seek audio to the clicked word's timestamp
+    if (audioPlayerRef.current?.seekTo) {
+      audioPlayerRef.current.seekTo(timestamp)
+    }
+  }
+
+  const handleTimeUpdate = (time: number) => {
+    setCurrentAudioTime(time)
+  }
+
+  // Check if this message has audio with word timings
+  const hasWordTimings = message.audio?.[0]?.wordTimings && message.audio[0].wordTimings.length > 0
+  const audioFile = message.audio?.[0]
   const isUser = message.type === "user";
   
   return (
@@ -31,25 +50,41 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
             <span className="text-muted-foreground">Thinking...</span>
           </div>
         ) : (
-          <div className="prose prose-sm max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
-            <ReactMarkdown 
-              components={{
-                a: ({ node, ...props }) => (
-                  <a {...props} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline" />
-                ),
-                p: ({ node, ...props }) => <p {...props} className="mb-2 last:mb-0" />,
-                strong: ({ node, ...props }) => <strong {...props} className="font-semibold" />,
-              }}
-            >
-              {message.content}
-            </ReactMarkdown>
+          <div className="space-y-3">
+            {hasWordTimings && audioFile ? (
+              <SynchronizedText 
+                content={audioFile.transcript || message.content}
+                wordTimings={audioFile.wordTimings}
+                currentTime={currentAudioTime}
+                onWordClick={handleWordClick}
+              />
+            ) : (
+              <div className="prose prose-sm max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+                <ReactMarkdown 
+                  components={{
+                    a: ({ node, ...props }) => (
+                      <a {...props} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline" />
+                    ),
+                    p: ({ node, ...props }) => <p {...props} className="mb-2 last:mb-0" />,
+                    strong: ({ node, ...props }) => <strong {...props} className="font-semibold" />,
+                  }}
+                >
+                  {message.content}
+                </ReactMarkdown>
+              </div>
+            )}
           </div>
         )}
         
         {/* Audio player */}
         {message.audio && message.audio.length > 0 && (
           <div className="mt-3">
-            <AudioPlayer audioFile={message.audio[0]} />
+            <AudioPlayer 
+              ref={audioPlayerRef}
+              audioFile={message.audio[0]} 
+              onTimeUpdate={handleTimeUpdate}
+              onSeek={setCurrentAudioTime}
+            />
           </div>
         )}
         

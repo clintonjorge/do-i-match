@@ -1,5 +1,12 @@
 export type JobDiscoveryState = "idle" | "processing" | "success" | "error";
 
+export interface WordTiming {
+  word: string;
+  start: number; // seconds
+  end: number;   // seconds
+  index: number; // word index in text
+}
+
 export interface AudioFile {
   mimeType?: string;
   fileType?: string;
@@ -8,6 +15,8 @@ export interface AudioFile {
   id?: string;
   fileSize?: string;
   data?: string; // Base64 audio data
+  wordTimings?: WordTiming[]; // New: word-level timing data
+  transcript?: string;        // New: full transcript text
 }
 
 export interface ChatMessage {

@@ -10,6 +10,8 @@ interface AudioPlayerProps {
     id?: string
   }
   className?: string
+  onTimeUpdate?: (currentTime: number) => void
+  onSeek?: (time: number) => void
 }
 
 const formatTime = (seconds: number): string => {
@@ -18,7 +20,10 @@ const formatTime = (seconds: number): string => {
   return `${mins}:${secs.toString().padStart(2, '0')}`
 }
 
-export const AudioPlayer = ({ audioFile, className }: AudioPlayerProps) => {
+export const AudioPlayer = React.forwardRef<
+  { seekTo: (time: number) => void }, 
+  AudioPlayerProps
+>(({ audioFile, className, onTimeUpdate, onSeek }, ref) => {
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
@@ -40,7 +45,11 @@ export const AudioPlayer = ({ audioFile, className }: AudioPlayerProps) => {
     const audio = new Audio(audioUrl)
     audioRef.current = audio
 
-    const updateTime = () => setCurrentTime(audio.currentTime)
+    const updateTime = () => {
+      const time = audio.currentTime
+      setCurrentTime(time)
+      onTimeUpdate?.(time)
+    }
     const updateDuration = () => setDuration(audio.duration || 0)
     const handleEnded = () => {
       setIsPlaying(false)
@@ -104,7 +113,13 @@ export const AudioPlayer = ({ audioFile, className }: AudioPlayerProps) => {
 
     audio.currentTime = value
     setCurrentTime(value)
+    onSeek?.(value)
   }
+
+  // Expose seekTo method via ref
+  React.useImperativeHandle(ref, () => ({
+    seekTo: handleSeek,
+  }), [])
 
   return (
     <div className={cn("flex items-center gap-3 p-3 bg-muted/30 rounded-lg", className)}>
@@ -159,4 +174,4 @@ export const AudioPlayer = ({ audioFile, className }: AudioPlayerProps) => {
       </div>
     </div>
   )
-}
+})
