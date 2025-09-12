@@ -267,7 +267,7 @@ const AIChatInput = ({
                 className="flex items-center gap-1 bg-primary hover:bg-primary/90 text-primary-foreground p-3 rounded-full font-medium justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                 title="Send"
                 type="button"
-                disabled={state === "processing" || !inputValue.trim()}
+                disabled={state === "processing" || inputValue.trim().length < 50}
                 onClick={onSubmit}
               >
                 <Send size={18} />
