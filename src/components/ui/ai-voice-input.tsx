@@ -24,6 +24,7 @@ export function AIVoiceInput({
   disabled = false
 }: AIVoiceInputProps) {
   const [isClient, setIsClient] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
@@ -38,6 +39,8 @@ export function AIVoiceInput({
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent parent container click
     if (disabled) return;
+    
+    setIsExpanded(true);
     
     if (isRecording) {
       onStop?.(duration, e);
@@ -71,40 +74,44 @@ export function AIVoiceInput({
         )}
       </button>
 
-      {/* Timer - only show when recording */}
-      {isRecording && (
+      {/* Timer - only show when recording and expanded */}
+      {isExpanded && isRecording && (
         <span className="font-mono text-xs text-muted-foreground">
           {formatTime(duration)}
         </span>
       )}
 
-      {/* Visualizer bars */}
-      <div className="h-3 w-32 flex items-center justify-center gap-0.5">
-        {[...Array(visualizerBars)].map((_, i) => (
-          <div
-            key={i}
-            className={cn(
-              "w-0.5 rounded-full transition-all duration-300",
-              isRecording
-                ? "bg-primary/60 animate-pulse"
-                : "bg-muted-foreground/20 h-1"
-            )}
-            style={
-              isRecording && isClient
-                ? {
-                    height: `${20 + Math.random() * 60}%`,
-                    animationDelay: `${i * 0.03}s`,
-                  }
-                : undefined
-            }
-          />
-        ))}
-      </div>
+      {/* Visualizer bars - only show when expanded */}
+      {isExpanded && (
+        <div className="h-3 w-32 flex items-center justify-center gap-0.5">
+          {[...Array(visualizerBars)].map((_, i) => (
+            <div
+              key={i}
+              className={cn(
+                "w-0.5 rounded-full transition-all duration-300",
+                isRecording
+                  ? "bg-primary/60 animate-pulse"
+                  : "bg-muted-foreground/20 h-1"
+              )}
+              style={
+                isRecording && isClient
+                  ? {
+                      height: `${20 + Math.random() * 60}%`,
+                      animationDelay: `${i * 0.03}s`,
+                    }
+                  : undefined
+              }
+            />
+          ))}
+        </div>
+      )}
 
-      {/* Status text */}
-      <p className="text-xs text-muted-foreground">
-        {isRecording ? "Listening..." : "Voice"}
-      </p>
+      {/* Status text - only show when expanded */}
+      {isExpanded && (
+        <p className="text-xs text-muted-foreground">
+          {isRecording ? "Listening..." : "Voice"}
+        </p>
+      )}
     </div>
   );
 }
