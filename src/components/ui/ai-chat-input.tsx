@@ -270,41 +270,32 @@ const AIChatInput = ({
               </button>
             </div>
 
-            {/* Live Transcript Preview */}
-            <AnimatePresence>
-              {isRecording && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="px-6 pb-3"
-                >
-                  <div className="bg-muted/50 rounded-lg p-3 border border-border/50">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                        {transcript ? "Listening" : "Start speaking..."}
-                      </span>
-                      {duration > 0 && (
-                        <span className="text-xs text-muted-foreground ml-auto">
-                          {Math.floor(duration / 1000)}s
-                        </span>
-                      )}
-                    </div>
-                    {transcript ? (
-                      <p className="text-sm text-foreground/80 leading-relaxed">
-                        {transcript}
-                      </p>
-                    ) : (
-                      <p className="text-sm text-muted-foreground italic">
-                        Your voice will appear here in real-time...
-                      </p>
-                    )}
+            {/* Live Transcript Preview - Debug Version */}
+            {(() => {
+              console.log("Debug - isRecording:", isRecording, "transcript:", transcript, "duration:", duration);
+              return null;
+            })()}
+            {(isRecording || transcript) && (
+              <div className="px-6 pb-3 bg-yellow-100 border-2 border-yellow-500">
+                <div className="bg-white rounded-lg p-3 border-2 border-green-500">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-4 h-4 bg-red-500 rounded-full" />
+                    <span className="text-sm font-bold text-black">
+                      DEBUG: Recording={isRecording ? "TRUE" : "FALSE"}
+                    </span>
+                    <span className="text-sm text-black ml-auto">
+                      Duration: {duration}ms
+                    </span>
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  <div className="text-sm text-black p-2 bg-gray-100 rounded">
+                    <strong>Transcript:</strong> "{transcript || "EMPTY"}"
+                  </div>
+                  <div className="text-xs text-gray-600 mt-1">
+                    Voice supported: {isSupported ? "YES" : "NO"}
+                  </div>
+                </div>
+              </div>
+            )}
 
           </div>
         </motion.div>
