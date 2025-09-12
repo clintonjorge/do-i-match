@@ -5,8 +5,8 @@ import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 interface AIVoiceInputProps {
-  onStart?: () => void;
-  onStop?: (duration: number) => void;
+  onStart?: (e?: React.MouseEvent) => void;
+  onStop?: (duration: number, e?: React.MouseEvent) => void;
   visualizerBars?: number;
   isRecording?: boolean;
   duration?: number;
@@ -35,13 +35,14 @@ export function AIVoiceInput({
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent parent container click
     if (disabled) return;
     
     if (isRecording) {
-      onStop?.(duration);
+      onStop?.(duration, e);
     } else {
-      onStart?.();
+      onStart?.(e);
     }
   };
 

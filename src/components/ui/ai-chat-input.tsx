@@ -82,10 +82,17 @@ const AIChatInput = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [inputValue]);
 
-  const handleActivate = () => setIsActive(true);
+  const handleActivate = (e?: React.MouseEvent) => {
+    // Only activate if clicking the container itself, not child elements
+    if (e && e.target !== e.currentTarget) return;
+    setIsActive(true);
+  };
+
+  const handleFocus = () => setIsActive(true);
 
   // Handle voice recording
-  const handleVoiceStart = async () => {
+  const handleVoiceStart = async (e?: React.MouseEvent) => {
+    e?.stopPropagation(); // Prevent container click
     try {
       await startRecording();
       setIsActive(true);
@@ -94,7 +101,8 @@ const AIChatInput = ({
     }
   };
 
-  const handleVoiceStop = (duration: number) => {
+  const handleVoiceStop = (duration: number, e?: React.MouseEvent) => {
+    e?.stopPropagation(); // Prevent container click
     stopRecording();
     // Add transcript to input value
     if (transcript.trim()) {
@@ -203,7 +211,7 @@ const AIChatInput = ({
                   rows={2}
                   className="flex-1 border-0 outline-0 rounded-md py-2 text-base bg-transparent w-full font-normal text-foreground resize-none leading-relaxed"
                   style={{ position: "relative", zIndex: 2 }}
-                  onFocus={handleActivate}
+                  onFocus={handleFocus}
                 />
                 <div className="absolute left-0 top-0 w-full h-full pointer-events-none flex items-start px-3 pt-2">
                   <AnimatePresence mode="wait">
@@ -240,14 +248,16 @@ const AIChatInput = ({
               </div>
 
               {isSupported && (
-                <AIVoiceInput
-                  onStart={handleVoiceStart}
-                  onStop={handleVoiceStop}
-                  isRecording={isRecording}
-                  duration={duration}
-                  disabled={state === "processing"}
-                  className="px-2"
-                />
+                <div className="relative z-10" style={{ pointerEvents: "auto" }}>
+                  <AIVoiceInput
+                    onStart={handleVoiceStart}
+                    onStop={handleVoiceStop}
+                    isRecording={isRecording}
+                    duration={duration}
+                    disabled={state === "processing"}
+                    className="px-2"
+                  />
+                </div>
               )}
               <button
                 className="flex items-center gap-1 bg-primary hover:bg-primary/90 text-primary-foreground p-3 rounded-full font-medium justify-center disabled:opacity-50 disabled:cursor-not-allowed"
