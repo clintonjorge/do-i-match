@@ -131,11 +131,6 @@ const AIChatInput = ({
       boxShadow: "var(--glow-primary)",
       transition: { type: "spring" as const, stiffness: 120, damping: 18 },
     },
-    recording: {
-      height: 200,
-      boxShadow: "var(--glow-primary)",
-      transition: { type: "spring" as const, stiffness: 120, damping: 18 },
-    },
   };
 
   const placeholderContainerVariants = {
@@ -193,10 +188,10 @@ const AIChatInput = ({
               : "border-border"
           }`}
           variants={state === "processing" ? {} : containerVariants}
-          animate={state === "processing" ? undefined : (isRecording ? "recording" : (isActive || inputValue ? "expanded" : "collapsed"))}
+          animate={state === "processing" ? undefined : (isActive || inputValue || isRecording ? "expanded" : "collapsed")}
           initial="collapsed"
           style={{ 
-            overflow: isRecording ? "visible" : "hidden", 
+            overflow: "hidden", 
             borderRadius: 32,
           }}
           onClick={handleActivate}
@@ -209,10 +204,14 @@ const AIChatInput = ({
               {/* Text Input & Placeholder */}
               <div className="relative flex-1">
                 <textarea
-                  value={inputValue}
-                  onChange={(e) => onInputChange(e.target.value)}
+                  value={isRecording ? inputValue + (inputValue && transcript ? " " : "") + transcript : inputValue}
+                  onChange={(e) => {
+                    if (!isRecording) {
+                      onInputChange(e.target.value);
+                    }
+                  }}
                   onKeyDown={onKeyPress}
-                  disabled={state === "processing"}
+                  disabled={state === "processing" || isRecording}
                   rows={2}
                   className="flex-1 border-0 outline-0 rounded-md py-2 text-base bg-transparent w-full font-normal text-foreground resize-none leading-relaxed"
                   style={{ position: "relative", zIndex: 2 }}
@@ -275,41 +274,6 @@ const AIChatInput = ({
               </button>
             </div>
 
-            {/* Live Transcript Preview */}
-            <AnimatePresence>
-              {isRecording && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="px-6 pb-3"
-                >
-                  <div className="bg-muted/50 rounded-lg p-3 border border-border/50">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                        {transcript ? "Listening" : "Start speaking..."}
-                      </span>
-                      {duration > 0 && (
-                        <span className="text-xs text-muted-foreground ml-auto">
-                          {Math.floor(duration / 1000)}s
-                        </span>
-                      )}
-                    </div>
-                    {transcript ? (
-                      <p className="text-sm text-foreground/80 leading-relaxed">
-                        {transcript}
-                      </p>
-                    ) : (
-                      <p className="text-sm text-muted-foreground italic">
-                        Your voice will appear here in real-time...
-                      </p>
-                    )}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
 
           </div>
         </motion.div>
