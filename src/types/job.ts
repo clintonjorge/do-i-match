@@ -1,12 +1,13 @@
 export type JobDiscoveryState = "idle" | "processing" | "success" | "error";
 
 export interface AudioFile {
-  mimeType: string;
-  fileType: string;
-  fileExtension: string;
-  fileName: string;
-  id: string;
-  fileSize: string;
+  mimeType?: string;
+  fileType?: string;
+  fileExtension?: string;
+  fileName?: string;
+  id?: string;
+  fileSize?: string;
+  data?: string; // Base64 audio data
 }
 
 export interface ChatMessage {

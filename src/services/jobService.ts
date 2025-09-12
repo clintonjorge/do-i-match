@@ -50,10 +50,30 @@ export const jobService = {
     try {
       console.log("Processing webhook response:", data);
       
-      // Handle new array-based response format
+      // Handle new array-based response format with nested content structure
       if (Array.isArray(data) && data.length > 0 && data[0].message) {
         console.log("Found array response with message, extracting content and audio");
         const messageData = data[0].message;
+        
+        // Handle new nested content structure
+        if (messageData.content && typeof messageData.content === 'object') {
+          const audioFiles = [];
+          if (messageData.content.audio?.data) {
+            audioFiles.push({
+              data: messageData.content.audio.data,
+              mimeType: 'audio/mp3',
+              fileType: 'audio',
+              fileExtension: 'mp3'
+            });
+          }
+          
+          return {
+            text_response: messageData.content.text || messageData.content,
+            audio: audioFiles
+          };
+        }
+        
+        // Fallback for legacy format
         return {
           text_response: messageData.content,
           audio: messageData.audio || []

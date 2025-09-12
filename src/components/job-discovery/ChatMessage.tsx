@@ -12,11 +12,24 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
   const isUser = message.type === "user";
   const [isPlaying, setIsPlaying] = useState(false);
   
-  const handlePlayAudio = async (audioId: string) => {
+  const handlePlayAudio = async (audioFile: any) => {
     try {
       setIsPlaying(true);
-      // Create audio URL from the file ID - this would need to be adjusted based on your API
-      const audioUrl = `https://api.your-domain.com/audio/${audioId}`;
+      
+      let audioUrl: string;
+      
+      // Handle base64 audio data
+      if (audioFile.data) {
+        audioUrl = `data:audio/mp3;base64,${audioFile.data}`;
+      }
+      // Fallback for legacy URL-based audio
+      else if (audioFile.id) {
+        audioUrl = `https://api.your-domain.com/audio/${audioFile.id}`;
+      }
+      else {
+        throw new Error('No audio data available');
+      }
+      
       const audio = new Audio(audioUrl);
       
       audio.onended = () => setIsPlaying(false);
@@ -74,11 +87,11 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => handlePlayAudio(message.audio![0].id)}
+              onClick={() => handlePlayAudio(message.audio![0])}
               disabled={isPlaying}
               className="text-xs"
             >
-              {isPlaying ? "Playing..." : "🔊 Read Transcript"}
+              {isPlaying ? "Playing..." : "🔊 Play Audio"}
             </Button>
           </div>
         )}
