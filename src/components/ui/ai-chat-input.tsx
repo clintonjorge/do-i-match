@@ -23,7 +23,7 @@ interface AIChatInputProps {
   state: JobDiscoveryState;
   onInputChange: (value: string) => void;
   onKeyPress: (e: React.KeyboardEvent) => void;
-  onSubmit: () => void;
+  onSubmit: (textToSubmit?: string) => void;
   hasMessages: boolean;
 }
 
@@ -271,7 +271,12 @@ const AIChatInput = ({
                   ? inputValue + (inputValue && transcript ? " " : "") + transcript
                   : inputValue
                 ).trim().length < 50}
-                onClick={onSubmit}
+                onClick={() => {
+                  const combinedText = isRecording 
+                    ? inputValue + (inputValue && transcript ? " " : "") + transcript
+                    : inputValue;
+                  onSubmit(combinedText);
+                }}
               >
                 <Send size={18} />
               </button>

@@ -7,7 +7,7 @@ interface UseJobDiscoveryReturn {
   inputValue: string;
   messages: ChatMessage[];
   setInputValue: (value: string) => void;
-  handleSubmit: () => Promise<void>;
+  handleSubmit: (textToSubmit?: string) => Promise<void>;
   handleKeyPress: (e: React.KeyboardEvent) => void;
 }
 
@@ -16,13 +16,14 @@ export const useJobDiscovery = (): UseJobDiscoveryReturn => {
   const [inputValue, setInputValue] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
 
-  const handleSubmit = useCallback(async () => {
-    if (!inputValue.trim()) return;
+  const handleSubmit = useCallback(async (textToSubmit?: string) => {
+    const textToSend = textToSubmit || inputValue;
+    if (!textToSend.trim()) return;
     
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       type: "user",
-      content: inputValue,
+      content: textToSend,
       timestamp: new Date(),
     };
 
@@ -37,7 +38,7 @@ export const useJobDiscovery = (): UseJobDiscoveryReturn => {
     setMessages(prev => [...prev, userMessage, processingMessage]);
     setState("processing");
     
-    const currentInput = inputValue;
+    const currentInput = textToSend;
     setInputValue("");
     
     try {
