@@ -50,6 +50,12 @@ export const jobService = {
     try {
       console.log("Processing webhook response:", data);
       
+      // Handle output field from webhook
+      if (data.output) {
+        console.log("Found data.output, extracting as text response");
+        return { text_response: data.output };
+      }
+      
       // Handle message.content structure (new AI response format)
       if (data.message?.content) {
         console.log("Found message.content, extracting as text response");
