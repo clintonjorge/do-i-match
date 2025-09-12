@@ -52,7 +52,32 @@ export const jobService = {
       console.log("Response type:", typeof data);
       console.log("Is array:", Array.isArray(data));
       
-      // Handle new array-based response format with nested content structure
+      // Handle direct content structure (actual webhook format)
+      if (data.content && typeof data.content === 'object') {
+        console.log("Found direct content structure:", data.content);
+        const audioFiles = [];
+        if (data.content.audio?.data) {
+          console.log("Found audio data, adding to response");
+          audioFiles.push({
+            data: data.content.audio.data,
+            mimeType: 'audio/mp3',
+            fileType: 'audio',
+            fileExtension: 'mp3'
+          });
+        }
+        
+        const textResponse = data.content.text || data.content;
+        console.log("Extracted text response:", textResponse);
+        
+        const result = {
+          text_response: textResponse,
+          audio: audioFiles
+        };
+        console.log("Returning processed response:", result);
+        return result;
+      }
+      
+      // Handle array-based response format with nested content structure
       if (Array.isArray(data) && data.length > 0 && data[0].message) {
         console.log("Found array response with message, extracting content and audio");
         const messageData = data[0].message;
