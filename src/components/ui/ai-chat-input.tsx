@@ -103,22 +103,22 @@ const AIChatInput = ({
 
   const handleVoiceStop = (duration: number, e?: React.MouseEvent) => {
     e?.stopPropagation(); // Prevent container click
+    console.log('=== Voice Stop ===');
+    console.log('Current inputValue:', inputValue);
+    console.log('Current transcript:', transcript);
+    
     stopRecording();
-    // Add transcript to input value
+    // Add transcript to input value only once when recording stops
     if (transcript.trim()) {
       const newValue = inputValue + (inputValue ? " " : "") + transcript.trim();
+      console.log('Adding transcript to input:', newValue);
       onInputChange(newValue);
       clearTranscript();
     }
   };
 
-  // Update input value with live transcript
-  useEffect(() => {
-    if (isRecording && transcript) {
-      const baseValue = inputValue.replace(/\s*\[Speaking...\]\s*$/, "");
-      onInputChange(baseValue + (baseValue ? " " : "") + transcript);
-    }
-  }, [transcript, isRecording]);
+  // DO NOT update input value with live transcript - this causes duplication
+  // The transcript will be added only when recording stops
 
   const containerVariants = {
     collapsed: {

@@ -107,12 +107,17 @@ export const useVoiceRecognition = (): UseVoiceRecognitionReturn => {
     };
 
     recognition.onresult = (event) => {
+      console.log('=== Speech Recognition onresult ===');
+      console.log('Event resultIndex:', event.resultIndex);
+      console.log('Event results length:', event.results.length);
+      
       let finalTranscript = '';
       let interimTranscript = '';
 
       // Build complete transcript from all results
       for (let i = 0; i < event.results.length; i++) {
         const transcript = event.results[i][0].transcript;
+        console.log(`Result ${i}: "${transcript}" (isFinal: ${event.results[i].isFinal})`);
         if (event.results[i].isFinal) {
           finalTranscript += transcript;
         } else {
@@ -120,8 +125,13 @@ export const useVoiceRecognition = (): UseVoiceRecognitionReturn => {
         }
       }
 
+      const fullTranscript = finalTranscript + interimTranscript;
+      console.log('Final transcript:', finalTranscript);
+      console.log('Interim transcript:', interimTranscript);
+      console.log('Full transcript to set:', fullTranscript);
+      
       // Set the complete transcript (Speech Recognition results are cumulative)
-      setTranscript(finalTranscript + interimTranscript);
+      setTranscript(fullTranscript);
     };
 
     recognition.onend = () => {
