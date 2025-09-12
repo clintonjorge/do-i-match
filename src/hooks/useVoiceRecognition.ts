@@ -110,7 +110,8 @@ export const useVoiceRecognition = (): UseVoiceRecognitionReturn => {
       let finalTranscript = '';
       let interimTranscript = '';
 
-      for (let i = event.resultIndex; i < event.results.length; i++) {
+      // Build complete transcript from all results
+      for (let i = 0; i < event.results.length; i++) {
         const transcript = event.results[i][0].transcript;
         if (event.results[i].isFinal) {
           finalTranscript += transcript;
@@ -119,10 +120,8 @@ export const useVoiceRecognition = (): UseVoiceRecognitionReturn => {
         }
       }
 
-      setTranscript(prevTranscript => {
-        const newTranscript = prevTranscript + finalTranscript + interimTranscript;
-        return newTranscript;
-      });
+      // Set the complete transcript (Speech Recognition results are cumulative)
+      setTranscript(finalTranscript + interimTranscript);
     };
 
     recognition.onend = () => {
