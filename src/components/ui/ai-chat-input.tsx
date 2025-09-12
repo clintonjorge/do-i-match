@@ -2,9 +2,11 @@
 
 import * as React from "react"
 import { useState, useEffect, useRef } from "react";
-import { Mic, Send } from "lucide-react";
+import { Send } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { AIVoiceInput } from "./ai-voice-input";
+import { useVoiceRecognition } from "@/hooks/useVoiceRecognition";
 import type { JobDiscoveryState } from "@/types/job";
 
 const JOB_DISCOVERY_PLACEHOLDERS = [
@@ -38,6 +40,18 @@ const AIChatInput = ({
   const [isActive, setIsActive] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
+  // Voice recognition hook
+  const {
+    isRecording,
+    transcript,
+    isSupported,
+    startRecording,
+    stopRecording,
+    clearTranscript,
+    error: voiceError,
+    duration
+  } = useVoiceRecognition();
+
   // Cycle placeholder text when input is inactive
   useEffect(() => {
     if (isActive || inputValue || hasMessages) return;
@@ -69,6 +83,34 @@ const AIChatInput = ({
   }, [inputValue]);
 
   const handleActivate = () => setIsActive(true);
+
+  // Handle voice recording
+  const handleVoiceStart = async () => {
+    try {
+      await startRecording();
+      setIsActive(true);
+    } catch (error) {
+      console.error("Failed to start voice recording:", error);
+    }
+  };
+
+  const handleVoiceStop = (duration: number) => {
+    stopRecording();
+    // Add transcript to input value
+    if (transcript.trim()) {
+      const newValue = inputValue + (inputValue ? " " : "") + transcript.trim();
+      onInputChange(newValue);
+      clearTranscript();
+    }
+  };
+
+  // Update input value with live transcript
+  useEffect(() => {
+    if (isRecording && transcript) {
+      const baseValue = inputValue.replace(/\s*\[Speaking...\]\s*$/, "");
+      onInputChange(baseValue + (baseValue ? " " : "") + transcript);
+    }
+  }, [transcript, isRecording]);
 
   const containerVariants = {
     collapsed: {
@@ -197,14 +239,16 @@ const AIChatInput = ({
                 </div>
               </div>
 
-              <button
-                className="p-3 rounded-full hover:bg-accent transition text-foreground"
-                title="Voice input"
-                type="button"
-                tabIndex={-1}
-              >
-                <Mic size={20} />
-              </button>
+              {isSupported && (
+                <AIVoiceInput
+                  onStart={handleVoiceStart}
+                  onStop={handleVoiceStop}
+                  isRecording={isRecording}
+                  duration={duration}
+                  disabled={state === "processing"}
+                  className="px-2"
+                />
+              )}
               <button
                 className="flex items-center gap-1 bg-primary hover:bg-primary/90 text-primary-foreground p-3 rounded-full font-medium justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                 title="Send"
